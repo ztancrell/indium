@@ -157,6 +157,26 @@ void Indium::PrivateBuffer::didModifyRange(Range<size_t> range) {
 	}
 };
 
+// The buffer's memory is the same host-visible mapping the device writes to, so there is nothing to
+// copy; memory that is not host-coherent only needs its mapped range invalidated.
+// ponytail: this runs when the blit is encoded, not after the device has finished writing. That is
+// right for host-coherent memory (invalidating is then a no-op) and can read stale data on memory
+// that is not. To fix, run it from the command buffer's completion.
+void Indium::PrivateBuffer::synchronize() {
+	if (!_mapped) {
+		return;
+	}
+	VkMappedMemoryRange vulkanRange {};
+	vulkanRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+	vulkanRange.memory = _memory;
+	vulkanRange.size = VK_WHOLE_SIZE;
+	vulkanRange.offset = 0;
+	if (DynamicVK::vkInvalidateMappedMemoryRanges(_privateDevice->device(), 1, &vulkanRange) != VK_SUCCESS) {
+		// TODO
+		abort();
+	}
+};
+
 uint64_t Indium::PrivateBuffer::gpuAddress() {
 	VkBufferDeviceAddressInfo info {};
 	info.sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;

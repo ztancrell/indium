@@ -24,6 +24,7 @@ namespace Indium {
 		virtual size_t length() const override;
 		virtual void* contents() override;
 		virtual void didModifyRange(Range<size_t> range) override;
+		virtual void synchronize() override;
 
 		virtual uint64_t gpuAddress() override;
 

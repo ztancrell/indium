@@ -11,6 +11,11 @@ namespace Indium {
 		virtual size_t length() const = 0;
 		virtual void* contents() = 0;
 		virtual void didModifyRange(Range<size_t> range) = 0;
+		/**
+		 * The other direction from `didModifyRange`: makes what the device has
+		 * written to this buffer visible through `contents()`.
+		 */
+		virtual void synchronize() = 0;
 
 		virtual uint64_t gpuAddress() = 0;
 	};
