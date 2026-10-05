@@ -45,6 +45,19 @@ namespace Indium {
 		 */
 		virtual uint64_t recommendedMaxWorkingSetSize() const = 0;
 
+		/**
+		 * A number that identifies this device and stays the same between runs:
+		 * the Vulkan vendor ID in the upper 32 bits and device ID in the lower.
+		 * It tells one model of GPU from another, not two identical cards apart.
+		 */
+		virtual uint64_t vendorAndDeviceID() const = 0;
+
+		/**
+		 * Whether the driver can render to a combined 24-bit depth, 8-bit
+		 * stencil attachment (`VK_FORMAT_D24_UNORM_S8_UINT`).
+		 */
+		virtual bool supportsDepth24Stencil8() const = 0;
+
 		virtual std::shared_ptr<CommandQueue> newCommandQueue() = 0;
 		virtual std::shared_ptr<RenderPipelineState> newRenderPipelineState(const RenderPipelineDescriptor& descriptor) = 0;
 		virtual std::shared_ptr<ComputePipelineState> newComputePipelineState(const ComputePipelineDescriptor& descriptor, PipelineOption options, std::shared_ptr<ComputePipelineReflection> reflection) = 0;

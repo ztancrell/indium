@@ -397,6 +397,16 @@ std::string Indium::PrivateDevice::name() const {
 	return _properties.deviceName;
 };
 
+uint64_t Indium::PrivateDevice::vendorAndDeviceID() const {
+	return (static_cast<uint64_t>(_properties.vendorID) << 32) | _properties.deviceID;
+};
+
+bool Indium::PrivateDevice::supportsDepth24Stencil8() const {
+	VkFormatProperties formatProperties {};
+	DynamicVK::vkGetPhysicalDeviceFormatProperties(_physicalDevice, VK_FORMAT_D24_UNORM_S8_UINT, &formatProperties);
+	return (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT) != 0;
+};
+
 /*
 	Metal's `recommendedMaxWorkingSetSize` is "an approximation of how much memory
 	this device can use with good performance", beyond which "the device is likely
